@@ -2,6 +2,13 @@ from datetime import datetime
 from kaggle.api.kaggle_api_extended import KaggleApi
 import csv
 import os
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+mpl.style.use('seaborn')
+
+import ta
 
 class DailyData():
 	def __init__(self, date, start, high, low, close, volume, open_int):
@@ -55,6 +62,21 @@ with open(ticker_path, newline='') as csvfile:
 									 int(row[5]),
 									 int(row[6])))
 
+
+#print(data_stream)
+#data = pd.read_csv('output_list.txt', sep=","
+df = pd.read_csv(ticker_path,sep=",") 
+print(df.head())
+#df = pd.DataFrame(data_stream)
+#for col in df.columns: 
+  #  print(col) 
+#df.head()
+
+# Add all ta features filling nans values
+df = ta.add_all_ta_features(df, "Open", "High", "Low", "Close", "Volume", fillna=True)
+print(df.shape)
+#df.head()
+#print(df)
 # Data format 
 # 0: Date
 # 1: Open
@@ -64,10 +86,20 @@ with open(ticker_path, newline='') as csvfile:
 # 5: Volume
 # 6: OpenInt
 
+plt.plot(df[5500:6000].trend_macd, label='MACD')
+plt.plot(df[5500:6000].trend_macd_signal, label='MACD Signal')
+plt.plot(df[5500:6000].trend_macd_diff, label='MACD Difference')
+#plt.plot([5500:6000].Close, label='Stock Price')
+plt.title('MACD, MACD Signal and MACD Difference')
+plt.legend()
+plt.show()
+
+
+
 #
 # Do the analytics and trading here
 #
 
-for day in data_stream:
-	print("Date: %s    Open: %f    High: %f    Low: %f    Close: %f    Volume: %d    OpenInt: %d" %
-	(day.date.strftime("%Y-%m-%d"), day.start, day.high, day.low, day.close, day.volume, day.open_int))
+#for day in data_stream:
+#	print("Date: %s    Open: %f    High: %f    Low: %f    Close: %f    Volume: %d    OpenInt: %d" %
+#	(day.date.strftime("%Y-%m-%d"), day.start, day.high, day.low, day.close, day.volume, day.open_int))
