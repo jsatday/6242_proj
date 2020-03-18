@@ -14,6 +14,12 @@ class DailyData():
 		self.open_int = open_int
 
 #
+# Change these variables
+#
+
+stock_ticker = "aapl"
+
+#
 # Import the data into the program
 #
 
@@ -21,31 +27,23 @@ class DailyData():
 api = KaggleApi()
 api.authenticate()
 
-# LOWERCASE. It matters.
-stock_ticker = "aapl"
-path = "Stocks/"+stock_ticker+".us.txt"
-data_stream = []
-
 # Create folder to store data in
 try:
-	os.mkdir("downloads")
+	os.mkdir("Stocks")
 except OSError:
 	print("Creation of the directory 'downloads' failed: It might exist already")
 
-# Data format 
-# 0: Date
-# 1: Open
-# 2: High
-# 3: Low
-# 4: Close
-# 5: Volume
-# 6: OpenInt
-
 # Get the data from the API
-api.dataset_download_file("borismarjanovic/price-volume-data-for-all-us-stocks-etfs", path, path="downloads")
-print("Downloaded: %s.us.txt" % (stock_ticker))
+ticker_path = "Stocks/"+stock_ticker+".us.txt"
+if os.path.isfile(ticker_path):
+	print("%s already exists." % (ticker_path))
+else:
+	api.dataset_download_file("borismarjanovic/price-volume-data-for-all-us-stocks-etfs", ticker_path, path="Stocks/")
+	print("Download compelte: %s.us.txt" % (stock_ticker))
 
-with open(path, newline='') as csvfile:
+# Import the data from the file
+data_stream = []
+with open(ticker_path, newline='') as csvfile:
 	reader = csv.reader(csvfile, delimiter=',')
 	header = next(reader, None)
 	for row in reader:
@@ -56,6 +54,15 @@ with open(path, newline='') as csvfile:
 									 float(row[4]),
 									 int(row[5]),
 									 int(row[6])))
+
+# Data format 
+# 0: Date
+# 1: Open
+# 2: High
+# 3: Low
+# 4: Close
+# 5: Volume
+# 6: OpenInt
 
 #
 # Do the analytics and trading here
