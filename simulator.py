@@ -1,5 +1,5 @@
 from datetime import datetime
-from kaggle.api.kaggle_api_extended import KaggleApi
+# from kaggle.api.kaggle_api_extended import KaggleApi
 from scipy import signal
 import csv
 import mplcursors
@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 
 # Initialize the API
-api = KaggleApi()
-api.authenticate()
+# api = KaggleApi()
+# api.authenticate()
 
 class Trades():
 	def __init__(self, buy_xs, buy_ys, sell_xs, sell_ys):
@@ -35,8 +35,9 @@ def get_ticker_data(ticker):
 		print("%s already exists." % (ticker_path))
 	else:
 		global api
-		api.dataset_download_file("borismarjanovic/price-volume-data-for-all-us-stocks-etfs", ticker, path="Stocks/")
-		print("Download compelte: %s.us.txt" % (ticker))
+		api.dataset_download_file("borismarjanovic/price-volume-data-for-all-us-stocks-etfs", ticker_path, path="Stocks/")
+		# api.dataset_download_files("borismarjanovic/price-volume-data-for-all-us-stocks-etfs", path="Stocks/")
+		print("Download complete: %s.us.txt" % (ticker))
 
 
 def macd_diff_smooth(df, start=0, end=-1):
@@ -69,20 +70,26 @@ def macd_diff_smooth(df, start=0, end=-1):
 
 	return trades, macd_diff_smooth_values
 
+
 def plot_macd_diff_smooth(df, trades, macd_diff_smooth_values, start=0, end=-1):
 	end = len(df.Close) if end==-1 else end
 	mpl.style.use('seaborn')
 
+	# Plot the price
 	fig, axs = plt.subplots(2, sharex=True)
 	axs[0].plot(df[start:end].Close, label='Stock Price')
+
+	# Plot the buys/sells on the price
 	axs[0].plot(trades.buy_xs, [df.Close[i] for i in trades.buy_xs], 'ro', color='green', ms=5)
 	axs[0].plot(trades.sell_xs, [df.Close[i] for i in trades.sell_xs], 'ro', color='red', ms=5)
 
+	# Plot the MACDs
 	axs[1].plot(df[start:end].trend_macd, label='MACD')
 	axs[1].plot(df[start:end].trend_macd_signal, label='MACD Signal')
 	axs[1].plot(df[start:end].trend_macd_diff, label='MACD Difference')
 	axs[1].plot([i for i in range(start,end)], macd_diff_smooth_values, label='MACD Difference Smooth', color='black')
 
+	# Plot the buys/sells on the MACD diff smooth
 	axs[1].plot(trades.buy_xs, trades.buy_ys, 'ro', color='green', ms=5)
 	axs[1].plot(trades.sell_xs, trades.sell_ys, 'ro', color='red', ms=5)
 
@@ -93,6 +100,7 @@ def trade_with_macd_diff(df, start=0, end=-1):
 	trades, macd_diff_smooth_values = macd_diff_smooth(df, start, end)
 	plot_macd_diff_smooth(df, trades, macd_diff_smooth_values, start, end)
 
+
 def main():
 	init_stocks_dir()
 
@@ -100,6 +108,7 @@ def main():
 
 	df_list = []
 	for ticker in ticker_list:
+		# get_ticker_data("ticker")
 		df = pd.read_csv("Stocks/"+ticker+".us.txt",sep=",")
 		df = ta.add_all_ta_features(df, "Open", "High", "Low", "Close", "Volume", fillna=True)
 		trade_with_macd_diff(df)
