@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import wget
 
 # Initialize the API
 api = KaggleApi()
@@ -104,6 +105,7 @@ def main():
 		if cons['Sector'][ind] == industry:
 			ticker_list_caps.append(cons['Symbol'][ind])
 	ticker_list = [x.lower() for x in ticker_list_caps
+	print(ticker_list)
 
 	#df_list = []
 	for ticker in ticker_list:
@@ -111,6 +113,7 @@ def main():
 		df = pd.read_csv("Stocks/"+ticker+".us.txt",sep=",")
 		df = ta.add_all_ta_features(df, "Open", "High", "Low", "Close", "Volume", fillna=True)
 		trade_with_macd_diff(df)
+		
 
 if __name__ == "__main__":
 	main()
