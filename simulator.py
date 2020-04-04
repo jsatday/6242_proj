@@ -39,6 +39,7 @@ def get_ticker_data(ticker):
 		print("Download compelte: %s.us.txt" % (ticker))
 
 
+
 def macd_diff_smooth(df, start=0, end=-1):
 	in_trade = False
 	window_size = 7
@@ -96,10 +97,17 @@ def trade_with_macd_diff(df, start=0, end=-1):
 def main():
 	init_stocks_dir()
 
-	ticker_list = ["aapl"]
+	#Need help getting this out of main
+	ticker_list_caps = []
+	cons = pd.read_csv("constituents.csv")
+	for ind in cons.index:
+		if cons['Sector'][ind] == industry:
+			ticker_list_caps.append(cons['Symbol'][ind])
+	ticker_list = [x.lower() for x in ticker_list_caps
 
-	df_list = []
+	#df_list = []
 	for ticker in ticker_list:
+		get_ticker_data(ticker)
 		df = pd.read_csv("Stocks/"+ticker+".us.txt",sep=",")
 		df = ta.add_all_ta_features(df, "Open", "High", "Low", "Close", "Volume", fillna=True)
 		trade_with_macd_diff(df)
