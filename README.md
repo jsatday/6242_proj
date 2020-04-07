@@ -29,3 +29,6 @@ https://www.kaggle.com/borismarjanovic/price-volume-data-for-all-us-stocks-etfs#
 
 ### Maybe look at this later
 https://www.kaggle.com/borismarjanovic/daily-and-intraday-stock-price-data
+
+## Stocks with Sectors
+https://datahub.io/core/s-and-p-500-companies#resource-s-and-p-500-companies_zip

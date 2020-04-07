@@ -2,3 +2,4 @@ Data
 ETFs
 Stocks
 *.zip
+__pycache__
