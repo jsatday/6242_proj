@@ -11,25 +11,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 
+import macd_diff_smooth as mds
+import macd_cross as mc
+import macd_cross_smooth as mcs
 
 # Initialize the API
 api = KaggleApi()
 api.authenticate()
-
-
-class Indicator_Trades():
-	def __init__(self, buy_xs, buy_ys, sell_xs, sell_ys):
-		self.buy_xs = buy_xs
-		self.buy_ys = buy_ys
-		self.sell_xs = sell_xs
-		self.sell_ys = sell_ys
-
-class Price_Trades():
-	def __init__(self, buy_xs, buy_ys, sell_xs, sell_ys):
-		self.buy_xs = buy_xs
-		self.buy_ys = buy_ys
-		self.sell_xs = sell_xs
-		self.sell_ys = sell_ys
 
 
 def init_stocks_dir():
@@ -64,89 +52,56 @@ def get_ticker_data(ticker):
 		print("Download complete: %s.us.txt" % (ticker))
 
 
-def macd_diff_smooth(df, start=0, end=-1):
-	in_trade = False
-	window_size = 7
-	macd_diff_data = []
-	macd_diff_smooth_values = []
-	itrades = Indicator_Trades([],[],[],[])
-	ptrades = Price_Trades([],[],[],[])
-	end = len(df.Close) if end==-1 else end
-
-	for i in range(start,end):
-		macd_diff_data.append(df.trend_macd_diff[i])
-		
-		# Wait for enough data to start smoothing the curve
-		if len(macd_diff_data) > window_size:
-			macd_diff_smooth_values = signal.savgol_filter(macd_diff_data, window_size, 1)
-
-			# Buy the stock
-			if macd_diff_smooth_values[-1]-macd_diff_smooth_values[-2] > 0 and not in_trade:
-				in_trade = True
-				itrades.buy_xs.append(i)
-				itrades.buy_ys.append(macd_diff_smooth_values[-1])
-				ptrades.buy_xs.append(i)
-				ptrades.buy_ys.append(df.Close[i])
-				continue
-
-			# Sell the stock
-			if macd_diff_smooth_values[-1]-macd_diff_smooth_values[-2] <= 0 and in_trade:
-				in_trade = False
-				itrades.sell_xs.append(i)
-				itrades.sell_ys.append(macd_diff_smooth_values[-1])
-				ptrades.sell_xs.append(i)
-				ptrades.sell_ys.append(df.Close[i])
-
-	return ptrades, itrades, macd_diff_smooth_values
-
-
-def plot_macd_diff_smooth(df, ptrades, itrades, macd_diff_smooth_values, start=0, end=-1):
-	end = len(df.Close) if end==-1 else end
-	mpl.style.use('seaborn')
-
-	# Plot the price
-	fig, axs = plt.subplots(2, sharex=True)
-	axs[0].plot(df[start:end].Close, label='Stock Price')
-
-	# Plot the buys/sells on the price
-	axs[0].plot(ptrades.buy_xs, ptrades.buy_ys, 'ro', color='green', ms=5)
-	axs[0].plot(ptrades.sell_xs, ptrades.sell_ys, 'ro', color='red', ms=5)
-
-	# Plot the MACDs
-	axs[1].plot(df[start:end].trend_macd, label='MACD')
-	axs[1].plot(df[start:end].trend_macd_signal, label='MACD Signal')
-	axs[1].plot(df[start:end].trend_macd_diff, label='MACD Difference')
-	axs[1].plot([i for i in range(start,end)], macd_diff_smooth_values, label='MACD Difference Smooth', color='black')
-
-	# Plot the buys/sells on the MACD diff smooth
-	axs[1].plot(itrades.buy_xs, itrades.buy_ys, 'ro', color='green', ms=5)
-	axs[1].plot(itrades.sell_xs, itrades.sell_ys, 'ro', color='red', ms=5)
-
-
-def trade_with_macd_diff(df, start=0, end=-1):
-	ptrades, itrades, macd_diff_smooth_values = macd_diff_smooth(df, start, end)
-	plot_macd_diff_smooth(df, ptrades, itrades, macd_diff_smooth_values, start, end)
-	return ptrades
-
-
 def trade_totals(df, ptrades):
-	total = 0
+	total_profit = 0
+	total_gain = 0
+	total_loss = 0
+	sum_perc_gain = 0
+	sum_perc_loss = 0
+	win = 0
+	loss = 0
+
 	for i in range(len(ptrades.sell_ys)):
-		total += (ptrades.sell_ys[i]-ptrades.buy_ys[i])
-	print("Total profit:", round(total, 2))
+		gain = ptrades.sell_ys[i]-ptrades.buy_ys[i]
+		total_profit += gain
+
+		if gain > 0:
+			total_gain += gain
+			win += 1
+			sum_perc_gain += gain/ptrades.buy_ys[i]
+		else:
+			total_loss += gain
+			loss += 1
+			sum_perc_loss += abs(gain)/ptrades.buy_ys[i]
+
+	accuracy = win/(win+loss)
+
+	print("Total profit:   $%0.2f" % (round(total_profit, 2)))
+	print("Win/Loss:        %d/%d" % (win, loss))
+	print("Accuracy:        %0.2f%%\n" % (round(accuracy*100, 2)))
+	print("Total Gain:     $%0.2f" % (round(total_gain, 2)))
+	print("Avg Gain:       $%0.2f" % (round(total_gain, 2)/win))
+	print("Avg Perc Gain:   %0.2f%%\n" % (round(sum_perc_gain/win*100, 2)))
+	print("Total Loss:    -$%0.2f" % (abs(round(total_loss, 2))))
+	print("Avg Loss:      -$%0.2f" % (abs(round(total_loss, 2)/win)))
+	print("Avg Perc Loss:   %0.2f%%" % (round(sum_perc_loss/loss*100, 2)))
 
 
 def main():
 	init_stocks_dir()
 
-	ticker_list = ["aapl"]
+	ticker_list = ["ba"]
 
 	df_list = []
 	for ticker in ticker_list:
 		# get_ticker_data("ticker")
 		df = pd.read_csv("Stocks/"+ticker+".us.txt",sep=",")
 		df = ta.add_all_ta_features(df, "Open", "High", "Low", "Close", "Volume", fillna=True)
-		ptrades = trade_with_macd_diff(df, 5500, 6000)
+		# for val in df:
+		# 	print(val)
+		# ptrades = mds.trade_with_macd_diff_smooth(df, 5500, 6000)
+		# ptrades = mc.trade_with_macd_cross(df, 5500, 6000)
+		ptrades = mcs.trade_with_macd_cross_smooth(df, 5500, 6000)
 		trade_totals(df, ptrades)
 		plt.show()
 
