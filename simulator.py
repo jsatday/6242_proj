@@ -1,5 +1,5 @@
 from datetime import datetime
-from kaggle.api.kaggle_api_extended import KaggleApi
+#from kaggle.api.kaggle_api_extended import KaggleApi
 from scipy import signal
 import csv
 import mplcursors
@@ -12,8 +12,8 @@ import matplotlib as mpl
 import wget
 
 # Initialize the API
-api = KaggleApi()
-api.authenticate()
+#api = KaggleApi()
+#api.authenticate()
 
 class Trades():
 	def __init__(self, buy_xs, buy_ys, sell_xs, sell_ys):
@@ -32,14 +32,12 @@ def init_stocks_dir():
 
 def get_ticker_data(ticker):
 	ticker_path = "Stocks/"+ticker+".us.txt"
+	url = "https://6242stockmarket.blob.core.windows.net/stocks/"+ticker+".us.txt"
 	if os.path.isfile(ticker_path):
 		print("%s already exists." % (ticker_path))
 	else:
-		global api
-		api.dataset_download_file("borismarjanovic/price-volume-data-for-all-us-stocks-etfs", ticker, path="Stocks/")
+		wget.download(url, "Stocks/")
 		print("Download compelte: %s.us.txt" % (ticker))
-
-
 
 def macd_diff_smooth(df, start=0, end=-1):
 	in_trade = False
@@ -97,22 +95,22 @@ def trade_with_macd_diff(df, start=0, end=-1):
 
 def main():
 	init_stocks_dir()
-
+	industry = "Industrials"
 	#Need help getting this out of main
 	ticker_list_caps = []
 	cons = pd.read_csv("constituents.csv")
 	for ind in cons.index:
 		if cons['Sector'][ind] == industry:
 			ticker_list_caps.append(cons['Symbol'][ind])
-	ticker_list = [x.lower() for x in ticker_list_caps
+	ticker_list = [x.lower() for x in ticker_list_caps]
 	print(ticker_list)
 
 	#df_list = []
 	for ticker in ticker_list:
 		get_ticker_data(ticker)
-		df = pd.read_csv("Stocks/"+ticker+".us.txt",sep=",")
-		df = ta.add_all_ta_features(df, "Open", "High", "Low", "Close", "Volume", fillna=True)
-		trade_with_macd_diff(df)
+		#df = pd.read_csv("Stocks/"+ticker+".us.txt",sep=",")
+		#df = ta.add_all_ta_features(df, "Open", "High", "Low", "Close", "Volume", fillna=True)
+		#trade_with_macd_diff(df)
 		
 
 if __name__ == "__main__":
