@@ -12,12 +12,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import warnings
+import wget
 
 import macd_diff_smooth as mds
 import macd_cross as mc
 import macd_cross_slope as mcs
 
 warnings.filterwarnings("ignore")
+
 
 def init_stocks_dir():
 	# Check if stocks exists
@@ -77,12 +79,15 @@ def trade_totals(df, ptrades):
 def main():
 	parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 	parser.add_argument("model", action="store", help="Use a model: \n" \
-	"    0: MACD Crossover\n" \
-	"    1: MACD Difference Smoothed\n" \
-	"    2: MACD slope")
+						"    0: MACD Crossover\n" \
+						"    1: MACD Difference Smoothed\n" \
+						"    2: MACD slope")
 	group = parser.add_mutually_exclusive_group(required=True)
 	group.add_argument("-t", action="store", dest="tickers", nargs="+", help="Test a ticker (or multiple)")
-	group.add_argument("-s", action="store", dest="sector", help="Test a sector")
+	group.add_argument("-s", action="store", dest="sector", help="Test a sector:\n" \
+						"    Industrials, Health Care, Information Technology, Consumer Discretionary,\n" \
+						"    Utilities, Financials, Materials, Real Estate, Consumer Staples,\n" \
+						"    Energy, Telecommunication Services\n")
 	parser.add_argument("-y", action="store", dest="year", nargs="+", help="Test a year (or year range)")
 	parser.add_argument("-p", action="store_true", dest="plot", default=False, help="Plot the chart")
 
@@ -107,6 +112,20 @@ def main():
 		print("Error: Enter a valid number")
 		exit(0)
 
+	# Populate the list of tickers
+	ticker_list = []
+	if args.sector:
+		ticker_list_caps = []
+		cons = pd.read_csv("constituents.csv")
+		for ind in cons.index:
+			if cons['Sector'][ind] == args.sector:
+				ticker_list_caps.append(cons['Symbol'][ind])
+		for x in ticker_list_caps:
+			ticker_list.append(x.lower())
+	else:
+		for x in args.tickers:
+			ticker_list.append(x)
+
 	# Initialize the Stocks directory
 	init_stocks_dir()
 
@@ -114,43 +133,33 @@ def main():
 	# Run the simulation
 	#
 
-	for ticker in args.tickers:
+	for ticker in ticker_list:
 
-		#
 		# Import the ticker data
-		#
-
 		df = pd.read_csv("Stocks/"+ticker+".us.txt",sep=",")
 		df = ta.add_all_ta_features(df, "Open", "High", "Low", "Close", "Volume", fillna=True)
 
-		#
 		# Pick a model
-		#
-
 		trades = 0
-
 		if model_num == 0:
-			print("========= MACD Crossover =========")
+			print("========== MACD Crossover: %s ==========\n" % ticker)
 			# trades = mc.trade_with_macd_cross(df, start=5500, end=6000, plot=args.plot)
 			trades = mc.trade_with_macd_cross(df, plot=args.plot)
 
 		elif model_num == 1:
-			print("===== MACD Difference Smoothed =====")
+			print("========== MACD Difference Smoothed: %s ==========\n" % ticker)
 			# trades = mds.trade_with_macd_diff_smooth(df, start=5500, end=6000, plot=args.plot)
 			trades = mds.trade_with_macd_diff_smooth(df, plot=args.plot)
 
 		elif model_num == 2:
-			print("======= MACD Crossover Slope =======")
+			print("========== MACD Crossover Slope: %s ==========\n" % ticker)
 			# trades = mcs.trade_with_macd_cross_smooth(df, start=5500, end=6000, plot=args.plot)
 			trades = mcs.trade_with_macd_cross_slope(df, plot=args.plot)
 
 		else:
 			print("Error: pick a valid model number")
 
-		#
 		# Find the totals
-		#
-
 		trade_totals(df, trades)
 
 
