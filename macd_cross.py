@@ -1,31 +1,17 @@
 from scipy import signal
+from trade_points import trade_points
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-
-class Indicator_Trades():
-	def __init__(self, buy_xs, buy_ys, sell_xs, sell_ys):
-		self.buy_xs = buy_xs
-		self.buy_ys = buy_ys
-		self.sell_xs = sell_xs
-		self.sell_ys = sell_ys
-
-class Price_Trades():
-	def __init__(self, buy_xs, buy_ys, sell_xs, sell_ys):
-		self.buy_xs = buy_xs
-		self.buy_ys = buy_ys
-		self.sell_xs = sell_xs
-		self.sell_ys = sell_ys
 
 
 def macd_cross(df, start=0, end=-1):
 	in_trade = False
 	macd = []
 	macd_signal = []
-	itrades = Indicator_Trades([],[],[],[])
-	ptrades = Price_Trades([],[],[],[])
-	end = len(df.Close) if end==-1 else end
+	itrades = trade_points([],[],[],[])
+	ptrades = trade_points([],[],[],[])
 
 	for i in range(start,end):
 		macd.append(df.trend_macd[i])
@@ -59,8 +45,12 @@ def plot_macd_cross(df, ptrades, itrades, start=0, end=-1):
 	end = len(df.Close) if end==-1 else end
 	mpl.style.use('seaborn')
 
-	# Plot the price
 	fig, axs = plt.subplots(2, sharex=True)
+
+	# Set the title
+	axs[0].set_title("MACD Crossover")
+
+	# Plot the price
 	axs[0].plot(df[start:end].Close, label='Stock Price')
 
 	# Plot the buys/sells on the price
@@ -76,7 +66,16 @@ def plot_macd_cross(df, ptrades, itrades, start=0, end=-1):
 	axs[1].plot(itrades.sell_xs, itrades.sell_ys, 'ro', color='red', ms=5)
 
 
-def trade_with_macd_cross(df, start=0, end=-1):
+def trade_with_macd_cross(df, start=0, end=-1, plot=False):
+	# See if an end was given
+	end = len(df.Close) if end==-1 else end
+
+	# Simulate the Trades
 	ptrades, itrades = macd_cross(df, start, end)
-	plot_macd_cross(df, ptrades, itrades, start, end)
+
+	# Plot the data
+	if plot:
+		plot_macd_cross(df, ptrades, itrades, start, end)
+		plt.show()
+	
 	return ptrades
