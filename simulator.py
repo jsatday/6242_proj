@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-
+import wget
 import macd_diff_smooth as mds
 import macd_cross as mc
 import macd_cross_smooth as mcs
@@ -46,8 +46,8 @@ def get_ticker_data(ticker):
 	if os.path.isfile(ticker_path):
 		print("%s already exists." % (ticker_path))
 	else:
-		global api
-		api.dataset_download_file("borismarjanovic/price-volume-data-for-all-us-stocks-etfs", ticker_path, path="Stocks/")
+		url = "https://6242stockmarket.blob.core.windows.net/stocks/"+ticker+".us.txt"
+		wget.download(url, "Stocks/")
 		# api.dataset_download_files("borismarjanovic/price-volume-data-for-all-us-stocks-etfs", path="Stocks/")
 		print("Download complete: %s.us.txt" % (ticker))
 
@@ -90,7 +90,16 @@ def trade_totals(df, ptrades):
 def main():
 	init_stocks_dir()
 
-	ticker_list = ["ba"]
+	#ticker_list = ["ba"]
+	industry = "Industrials"
+	#Need help getting this out of main
+	ticker_list_caps = []
+	cons = pd.read_csv("constituents.csv")
+	for ind in cons.index:
+		if cons['Sector'][ind] == industry:
+			ticker_list_caps.append(cons['Symbol'][ind])
+	ticker_list = [x.lower() for x in ticker_list_caps]
+	print(ticker_list)
 
 	df_list = []
 	for ticker in ticker_list:
