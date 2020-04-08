@@ -30,9 +30,7 @@ def init_stocks_dir():
 		print("Creation of the directory 'Stocks' failed: It might exist already")
 
 
-def get_ticker_data(ticker):
-	ticker_path = "Stocks/"+ticker+".us.txt"
-	url = "https://6242stockmarket.blob.core.windows.net/stocks/"+ticker+".us.txt"
+def get_ticker_data(ticker):-
 	if os.path.isfile(ticker_path):
 		print("%s already exists." % (ticker_path))
 	else:
