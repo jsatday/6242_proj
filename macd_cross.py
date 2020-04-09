@@ -1,5 +1,6 @@
 from scipy import signal
-from trade_points import trade_points
+from trade_context import trade_context
+import trade_context as tc
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -7,42 +8,27 @@ import matplotlib as mpl
 
 
 def macd_cross(df, start=0, end=-1):
-	in_trade = False
-	macd = []
-	macd_signal = []
-	itrades = trade_points([],[],[],[])
-	ptrades = trade_points([],[],[],[])
+	t_ctx = trade_context()
 
-	for i in range(start,end):
-		macd.append(df.trend_macd[i])
-		macd_signal.append(df.trend_macd_signal[i])
+	for i in range(start, end):
 
 		# Buy the stock
 		if (df.trend_macd[i] > df.trend_macd_signal[i] and
-			not in_trade):
+			not t_ctx.in_trade):
 
-			in_trade = True
-			itrades.buy_xs.append(i)
-			itrades.buy_ys.append(macd[-1])
-			ptrades.buy_xs.append(i)
-			ptrades.buy_ys.append(df.Close[i])
+			tc.buy_stock(t_ctx, i, df.Close[i], df.trend_macd[i])
 			continue
 
 		# Sell the stock
 		if (df.trend_macd[i] < df.trend_macd_signal[i] and
-			in_trade):
+			t_ctx.in_trade):
 
-			in_trade = False
-			itrades.sell_xs.append(i)
-			itrades.sell_ys.append(macd[-1])
-			ptrades.sell_xs.append(i)
-			ptrades.sell_ys.append(df.Close[i])
+			tc.sell_stock(t_ctx, i, df.Close[i], df.trend_macd[i])
 
-	return ptrades, itrades
+	return t_ctx
 
 
-def plot_macd_cross(df, ptrades, itrades, start=0, end=-1):
-	end = len(df.Close) if end==-1 else end
+def plot_macd_cross(df, t_ctx, start=0, end=-1):
 	mpl.style.use('seaborn')
 
 	fig, axs = plt.subplots(2, sharex=True)
@@ -54,16 +40,16 @@ def plot_macd_cross(df, ptrades, itrades, start=0, end=-1):
 	axs[0].plot(df[start:end].Close, label='Stock Price')
 
 	# Plot the buys/sells on the price
-	axs[0].plot(ptrades.buy_xs, ptrades.buy_ys, 'ro', color='green', ms=5)
-	axs[0].plot(ptrades.sell_xs, ptrades.sell_ys, 'ro', color='red', ms=5)
+	axs[0].plot(t_ctx.buy_times, t_ctx.buy_prices, 'ro', color='green', ms=5)
+	axs[0].plot(t_ctx.sell_times, t_ctx.sell_prices, 'ro', color='red', ms=5)
 
 	# Plot the MACDs
 	axs[1].plot(df[start:end].trend_macd, label='MACD')
 	axs[1].plot(df[start:end].trend_macd_signal, label='MACD Signal')
 	
 	# Plot the buys/sells on the MACD
-	axs[1].plot(itrades.buy_xs, itrades.buy_ys, 'ro', color='green', ms=5)
-	axs[1].plot(itrades.sell_xs, itrades.sell_ys, 'ro', color='red', ms=5)
+	axs[1].plot(t_ctx.buy_times, t_ctx.buy_inds, 'ro', color='green', ms=5)
+	axs[1].plot(t_ctx.sell_times, t_ctx.sell_inds, 'ro', color='red', ms=5)
 
 
 def trade_with_macd_cross(df, start=0, end=-1, plot=False):
@@ -71,11 +57,10 @@ def trade_with_macd_cross(df, start=0, end=-1, plot=False):
 	end = len(df.Close) if end==-1 else end
 
 	# Simulate the Trades
-	ptrades, itrades = macd_cross(df, start, end)
+	t_ctx = macd_cross(df, start, end)
 
 	# Plot the data
 	if plot:
-		plot_macd_cross(df, ptrades, itrades, start, end)
-		plt.show()
-	
-	return ptrades
+		plot_macd_cross(df, t_ctx, start, end)
+
+	return t_ctx

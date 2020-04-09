@@ -1,6 +1,7 @@
 from datetime import datetime
 from kaggle.api.kaggle_api_extended import KaggleApi
 from scipy import signal
+from trade_context import trade_context
 from zipfile import ZipFile
 import argparse
 import csv
@@ -18,7 +19,8 @@ import macd_diff_smooth as mds
 import macd_cross as mc
 import macd_cross_slope as mcs
 
-warnings.filterwarnings("ignore")
+
+# warnings.filterwarnings("ignore")
 
 
 def init_stocks_dir():
@@ -41,7 +43,7 @@ def init_stocks_dir():
 		print("Unzip complete")
 
 
-def trade_totals(df, ptrades):
+def trade_totals(df, t_ctx):
 	total_profit = 0
 	total_gain = 0
 	total_loss = 0
@@ -50,18 +52,18 @@ def trade_totals(df, ptrades):
 	win = 0
 	loss = 0
 
-	for i in range(len(ptrades.sell_ys)):
-		gain = ptrades.sell_ys[i]-ptrades.buy_ys[i]
+	for i in range(len(t_ctx.sell_prices)):
+		gain = t_ctx.sell_prices[i]-t_ctx.buy_prices[i]
 		total_profit += gain
 
 		if gain > 0:
 			total_gain += gain
 			win += 1
-			sum_perc_gain += gain/ptrades.buy_ys[i]
+			sum_perc_gain += gain/t_ctx.buy_prices[i]
 		else:
 			total_loss += gain
 			loss += 1
-			sum_perc_loss += abs(gain)/ptrades.buy_ys[i]
+			sum_perc_loss += abs(gain)/t_ctx.buy_prices[i]
 
 	accuracy = win/(win+loss) if loss != 0 else 1
 
@@ -78,7 +80,7 @@ def trade_totals(df, ptrades):
 
 def main():
 	parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
-	parser.add_argument("model", action="store", help="Use a model: \n" \
+	parser.add_argument("model", action="store", nargs="+", help="Use a model (or multiple models): \n" \
 						"    0: MACD Crossover\n" \
 						"    1: MACD Difference Smoothed\n" \
 						"    2: MACD slope")
@@ -106,8 +108,10 @@ def main():
 			exit(0)
 
 	# Validate that model is a number
+	model_nums = []
 	try:
-		model_num = int(args.model)
+		for m in args.model:
+			model_nums.append(int(m))
 	except:
 		print("Error: Enter a valid number")
 		exit(0)
@@ -140,28 +144,32 @@ def main():
 		df = ta.add_all_ta_features(df, "Open", "High", "Low", "Close", "Volume", fillna=True)
 
 		# Pick a model
-		trades = 0
-		if model_num == 0:
-			print("========== MACD Crossover: %s ==========\n" % ticker)
-			# trades = mc.trade_with_macd_cross(df, start=5500, end=6000, plot=args.plot)
-			trades = mc.trade_with_macd_cross(df, plot=args.plot)
+		t_ctx = 0
+		for model_num in model_nums:
+			if model_num == 0:
+				print("========== MACD Crossover: %s ==========\n" % ticker)
+				# t_ctx = mc.trade_with_macd_cross(df, start=5500, end=6000, plot=args.plot)
+				t_ctx = mc.trade_with_macd_cross(df, plot=args.plot)
 
-		elif model_num == 1:
-			print("========== MACD Difference Smoothed: %s ==========\n" % ticker)
-			# trades = mds.trade_with_macd_diff_smooth(df, start=5500, end=6000, plot=args.plot)
-			trades = mds.trade_with_macd_diff_smooth(df, plot=args.plot)
+			elif model_num == 1:
+				print("========== MACD Difference Smoothed: %s ==========\n" % ticker)
+				# t_ctx = mds.trade_with_macd_diff_smooth(df, start=5500, end=6000, plot=args.plot)
+				t_ctx = mds.trade_with_macd_diff_smooth(df, plot=args.plot)
 
-		elif model_num == 2:
-			print("========== MACD Crossover Slope: %s ==========\n" % ticker)
-			# trades = mcs.trade_with_macd_cross_smooth(df, start=5500, end=6000, plot=args.plot)
-			trades = mcs.trade_with_macd_cross_slope(df, plot=args.plot)
+			if model_num == 2:
+				print("========== MACD Crossover Slope: %s ==========\n" % ticker)
+				# t_ctx = mcs.trade_with_macd_cross_slope(df, start=5500, end=6000, plot=args.plot)
+				t_ctx = mcs.trade_with_macd_cross_slope(df, plot=args.plot)
 
-		else:
-			print("Error: pick a valid model number")
+			else:
+				print("Error: pick a valid model number")
 
-		# Find the totals
-		trade_totals(df, trades)
+			# Find the totals
+			trade_totals(df, t_ctx)
 
+		# Show the plots
+		if args.plot:
+			plt.show()
 
 if __name__ == "__main__":
 	main()
