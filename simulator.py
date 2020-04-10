@@ -18,6 +18,7 @@ import wget
 import macd_diff_smooth as mds
 import macd_cross as mc
 import macd_cross_slope as mcs
+import rsi
 
 
 # warnings.filterwarnings("ignore")
@@ -51,6 +52,7 @@ def trade_totals(df, t_ctx):
 	sum_perc_loss = 0
 	win = 0
 	loss = 0
+	print_each = 0
 
 	for i in range(len(t_ctx.sell_prices)):
 		gain = t_ctx.sell_prices[i]-t_ctx.buy_prices[i]
@@ -66,16 +68,19 @@ def trade_totals(df, t_ctx):
 			sum_perc_loss += abs(gain)/t_ctx.buy_prices[i]
 
 	accuracy = win/(win+loss) if loss != 0 else 1
+	avg_percent_loss = sum_perc_loss/loss*100 if loss != 0 else 0
 
-	print("Total profit:   $%0.2f" % (round(total_profit, 2)))
-	print("Win/Loss:        %d/%d" % (win, loss if loss != 0 else 0))
-	print("Accuracy:        %0.2f%%\n" % (round(accuracy*100, 2)))
-	print("Total Gain:     $%0.2f" % (round(total_gain, 2)))
-	print("Avg Gain:       $%0.2f" % (round(total_gain, 2)/win))
-	print("Avg Perc Gain:   %0.2f%%\n" % (round(sum_perc_gain/win*100, 2)))
-	print("Total Loss:    -$%0.2f" % (abs(round(total_loss, 2))))
-	print("Avg Loss:      -$%0.2f" % (abs(round(total_loss, 2)/win)))
-	print("Avg Perc Loss:   %0.2f%%\n" % (round(sum_perc_loss/loss*100, 2)))
+	if print_each == 1:
+		print("Total profit:   $%0.2f" % (round(total_profit, 2)))
+		print("Win/Loss:        %d/%d" % (win, loss if loss != 0 else 0))
+		print("Accuracy:        %0.2f%%\n" % (round(accuracy*100, 2)))
+		print("Total Gain:     $%0.2f" % (round(total_gain, 2)))
+		print("Avg Gain:       $%0.2f" % (round(total_gain, 2)/win))
+		print("Avg Perc Gain:   %0.2f%%\n" % (round(sum_perc_gain/win*100, 2)))
+		print("Total Loss:    -$%0.2f" % (abs(round(total_loss, 2))))
+		print("Avg Loss:      -$%0.2f" % (abs(round(total_loss, 2)/win)))
+		print("Avg Perc Loss:   %0.2f%%\n" % (round(avg_percent_loss, 2)))
+	return (accuracy,(sum_perc_gain/win))
 
 
 def main():
@@ -83,7 +88,8 @@ def main():
 	parser.add_argument("model", action="store", nargs="+", help="Use a model (or multiple models): \n" \
 						"    0: MACD Crossover\n" \
 						"    1: MACD Difference Smoothed\n" \
-						"    2: MACD slope")
+						"    2: MACD slope\n" \
+						"	 3: RSI")
 	group = parser.add_mutually_exclusive_group(required=True)
 	group.add_argument("-t", action="store", dest="tickers", nargs="+", help="Test a ticker (or multiple)")
 	group.add_argument("-s", action="store", dest="sector", help="Test a sector:\n" \
@@ -136,6 +142,8 @@ def main():
 	#
 	# Run the simulation
 	#
+	accuracy_total = []
+	percentage_gain_total = []
 
 	for ticker in ticker_list:
 
@@ -156,20 +164,29 @@ def main():
 				# t_ctx = mds.trade_with_macd_diff_smooth(df, start=5500, end=6000, plot=args.plot)
 				t_ctx = mds.trade_with_macd_diff_smooth(df, plot=args.plot)
 
-			if model_num == 2:
+			elif model_num == 2:
 				print("========== MACD Crossover Slope: %s ==========\n" % ticker)
 				# t_ctx = mcs.trade_with_macd_cross_slope(df, start=5500, end=6000, plot=args.plot)
 				t_ctx = mcs.trade_with_macd_cross_slope(df, plot=args.plot)
+			elif model_num == 3:
+				print("========== RSI: %s ==========\n" % ticker)
+				# t_ctx = mcs.trade_with_macd_cross_slope(df, start=5500, end=6000, plot=args.plot)
+				t_ctx = rsi.trade_with_rsi(df, plot=args.plot)
 
 			else:
 				print("Error: pick a valid model number")
 
 			# Find the totals
-			trade_totals(df, t_ctx)
+			accuracy_ticker = trade_totals(df, t_ctx)
+			accuracy_total.append(accuracy_ticker[0])
+			percentage_gain_total.append(accuracy_ticker[1])
+	
 
 		# Show the plots
 		if args.plot:
 			plt.show()
+	print(np.mean(accuracy_total)*100)
+	print(np.mean(percentage_gain_total)*100)
 
 if __name__ == "__main__":
 	main()
