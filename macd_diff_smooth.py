@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 
 
-def macd_diff_smooth(df, start=0, end=-1):
+def macd_diff_smooth(df, start=0, end=-1, s_year=0, e_year=0):
 	window_size = 7
 	macd_diff_data = []
 	macd_diff_smooth_data = []
@@ -20,6 +20,12 @@ def macd_diff_smooth(df, start=0, end=-1):
 		if i-start > window_size:
 			macd_diff_smooth_data = signal.savgol_filter(macd_diff_data, window_size, 1)
 		else:
+			continue
+
+		# Check the date range
+		if s_year != 0 and int(df.Date[i][0:4]) < s_year:
+			continue
+		if e_year != 0 and int(df.Date[i][0:4]) > e_year:
 			continue
 
 		# Buy the stock
@@ -66,12 +72,12 @@ def plot_macd_diff_smooth(df, t_ctx, macd_diff_smooth_data, start=0, end=-1):
 	axs[1].plot(t_ctx.sell_times, t_ctx.sell_inds, 'ro', color='red', ms=5)
 
 
-def trade_with_macd_diff_smooth(df, start=0, end=-1, plot=False):
+def trade_with_macd_diff_smooth(df, start=0, end=-1, s_year=0, e_year=0, plot=False):
 	# See if an end was given
 	end = len(df.Close) if end==-1 else end
 
 	# Simulate the Trades
-	t_ctx, macd_diff_smooth_data = macd_diff_smooth(df, start, end)
+	t_ctx, macd_diff_smooth_data = macd_diff_smooth(df, start, end, s_year, e_year)
 
 	# Plot the data
 	if plot:

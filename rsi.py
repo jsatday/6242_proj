@@ -7,10 +7,16 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 
 
-def rsi(df, start=0, end=-1):
+def rsi(df, start=0, end=-1, s_year=0, e_year=0):
 	t_ctx = trade_context()
 
 	for i in range(start, end):
+
+		# Check the date range
+		if s_year != 0 and int(df.Date[i][0:4]) < s_year:
+			continue
+		if e_year != 0 and int(df.Date[i][0:4]) > e_year:
+			break
 
 		# Buy the stock
 		if (df.momentum_rsi[i] < 30 and
@@ -52,12 +58,12 @@ def plot_rsi(df, t_ctx, start=0, end=-1):
 	axs[1].plot(t_ctx.sell_times, t_ctx.sell_inds, 'ro', color='red', ms=5)
 
 
-def trade_with_rsi(df, start=0, end=-1, plot=False):
+def trade_with_rsi(df, start=0, end=-1, plot=False, s_year=0, e_year=0):
 	# See if an end was given
 	end = len(df.Close) if end==-1 else end
 
 	# Simulate the Trades
-	t_ctx = rsi(df, start, end)
+	t_ctx = rsi(df, start, end, s_year, e_year)
 
 	# Plot the data
 	if plot:

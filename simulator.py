@@ -44,6 +44,28 @@ def init_stocks_dir():
 		print("Unzip complete")
 
 
+def check_valid_date_range(df, s_year, e_year):
+	# Check if valid ints
+	try:
+		s_year = int(s_year)
+		e_year = int(e_year)
+	except:
+		print("Error: year is not a valid int")
+		return False
+
+	# Check for valid range
+	if e_year < s_year:
+		print("Error: end year is less than start year")
+		return False
+
+	# Check if stock existed in that range
+	if int(df.Date[0][0:4]) <= s_year and int(df.Date[len(df.Date)-1][0:4]) >= e_year:
+		return True
+	else:
+		print("Error: not a valid date range. Try dates beween: %s-%s" % (df.Date[0][0:4], df.Date[len(df.Date)-1][0:4]))
+		return False
+
+
 def trade_totals(df, t_ctx, print_each=False):
 	total_profit = 0
 	total_gain = 0
@@ -69,20 +91,22 @@ def trade_totals(df, t_ctx, print_each=False):
 	accuracy = win/(win+loss) if loss != 0 else 1
 	avg_percent_loss = sum_perc_loss/loss*100 if loss != 0 else 0
 	avg_gain = total_gain/win if win != 0 else 0
-	avg_percentage_gain = sum_perc_gain/win*100 if win != 0 else 0
+	avg_percent_gain = sum_perc_gain/win*100 if win != 0 else 0
 	avg_loss = total_loss/win if win != 0 else 0
+	cumulative_perc_gain = avg_percent_gain*accuracy-avg_percent_loss*(1-accuracy)
 
 	if print_each:
-		print("Total profit:   $%0.2f" % (round(total_profit, 2)))
-		print("Win/Loss:        %d/%d" % (win, loss if loss != 0 else 0))
-		print("Accuracy:        %0.2f%%\n" % (round(accuracy*100, 2)))
-		print("Total Gain:     $%0.2f" % (round(total_gain, 2)))
-		print("Avg Gain:       $%0.2f" % (round(avg_gain, 2)))
-		print("Avg Perc Gain:   %0.2f%%\n" % (round(avg_percentage_gain, 2)))
-		print("Total Loss:    -$%0.2f" % (abs(round(total_loss, 2))))
-		print("Avg Loss:      -$%0.2f" % (abs(round(avg_loss, 2))))
-		print("Avg Perc Loss:   %0.2f%%\n" % (round(avg_percent_loss, 2)))
-	return (accuracy,(avg_percentage_gain))
+		print("Combined Perc Gain: %0.2f%%\n" % (round(cumulative_perc_gain, 2)))
+		print("Total Profit:       $%0.2f" % (round(total_profit, 2)))
+		print("Win/Loss:            %d/%d" % (win, loss if loss != 0 else 0))
+		print("Accuracy:            %0.2f%%\n" % (round(accuracy*100, 2)))
+		print("Total Gain:         $%0.2f" % (round(total_gain, 2)))
+		print("Avg Gain:           $%0.2f" % (round(avg_gain, 2)))
+		print("Avg Perc Gain:       %0.2f%%\n" % (round(avg_percent_gain, 2)))
+		print("Total Loss:        -$%0.2f" % (abs(round(total_loss, 2))))
+		print("Avg Loss:          -$%0.2f" % (abs(round(avg_loss, 2))))
+		print("Avg Perc Loss:       %0.2f%%\n" % (round(avg_percent_loss, 2)))
+	return (accuracy,(avg_percent_gain))
 
 
 def main():
@@ -110,11 +134,15 @@ def main():
 		exit(0)
 
 	# There can only be one year or a range of years
+	s_year = 0
+	e_year = 0
 	if args.year:
 		if len(args.year) > 2:
 			print("Error: Only one year or a range of years (two years) is allowed")
 			parser.parse_args(["-h"])
-			exit(0)
+			exit(-1)
+		s_year = int(args.year[0])
+		e_year = int(args.year[-1])
 
 	# Validate that model is a number
 	model_nums = []
@@ -154,31 +182,36 @@ def main():
 		try:
 			df = pd.read_csv("Stocks/"+ticker+".us.txt",sep=",")
 			df = ta.add_all_ta_features(df, "Open", "High", "Low", "Close", "Volume", fillna=True)
+			if args.year:
+				if not check_valid_date_range(df, args.year[0], args.year[-1]):
+					exit(-1)
 		except OSError as e:
 			print("%s:" % (ticker), e)
 			continue
 
-		# Pick a model
+		# Initialize variables
 		t_ctx = 0
+
+		# Pick a model
 		for model_num in model_nums:
 			if model_num == 0:
 				#print("========== MACD Crossover: %s ==========\n" % ticker)
 				# t_ctx = mc.trade_with_macd_cross(df, start=5500, end=6000, plot=args.plot)
-				t_ctx = mc.trade_with_macd_cross(df, plot=args.plot)
+				t_ctx = mc.trade_with_macd_cross(df, plot=args.plot, s_year=s_year, e_year=e_year)
 
 			elif model_num == 1:
 				#print("========== MACD Difference Smoothed: %s ==========\n" % ticker)
 				# t_ctx = mds.trade_with_macd_diff_smooth(df, start=5500, end=6000, plot=args.plot)
-				t_ctx = mds.trade_with_macd_diff_smooth(df, plot=args.plot)
+				t_ctx = mds.trade_with_macd_diff_smooth(df, plot=args.plot, s_year=s_year, e_year=e_year)
 
 			elif model_num == 2:
 				#print("========== MACD Crossover Slope: %s ==========\n" % ticker)
 				# t_ctx = mcs.trade_with_macd_cross_slope(df, start=5500, end=6000, plot=args.plot)
-				t_ctx = mcs.trade_with_macd_cross_slope(df, plot=args.plot)
+				t_ctx = mcs.trade_with_macd_cross_slope(df, plot=args.plot, s_year=s_year, e_year=e_year)
 			elif model_num == 3:
 				#print("========== RSI: %s ==========\n" % ticker)
 				# t_ctx = mcs.trade_with_macd_cross_slope(df, start=5500, end=6000, plot=args.plot)
-				t_ctx = rsi.trade_with_rsi(df, plot=args.plot)
+				t_ctx = rsi.trade_with_rsi(df, plot=args.plot, s_year=s_year, e_year=e_year)
 				pass
 
 			else:

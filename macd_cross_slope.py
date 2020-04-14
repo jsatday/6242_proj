@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 
 
-def macd_cross_slope(df, start=0, end=-1):
+def macd_cross_slope(df, start=0, end=-1, s_year=0, e_year=0):
 	window_size = 15
 	macd_smooth = []
 	t_ctx = trade_context()
@@ -18,6 +18,12 @@ def macd_cross_slope(df, start=0, end=-1):
 		if i-start >= window_size:
 			macd_smooth = signal.savgol_filter(df.trend_macd[start:i+1], window_size, 1)
 		else:
+			continue
+
+		# Check the date range
+		if s_year != 0 and int(df.Date[i][0:4]) < s_year:
+			continue
+		if e_year != 0 and int(df.Date[i][0:4]) > e_year:
 			continue
 
 		# if i-start >= window_size:
@@ -88,12 +94,12 @@ def plot_macd_cross_slope(df, t_ctx, macd_smooth, start=0, end=-1):
 	axs[1].plot(t_ctx.sell_times, t_ctx.sell_inds, 'ro', color='red', ms=5)
 
 
-def trade_with_macd_cross_slope(df, start=0, end=-1, plot=False):
+def trade_with_macd_cross_slope(df, start=0, end=-1, s_year=0, e_year=0, plot=False):
 	# See if an end was given
 	end = len(df.Close) if end==-1 else end
 
 	# Simulate the Trades
-	t_ctx, macd_smooth = macd_cross_slope(df, start, end)
+	t_ctx, macd_smooth = macd_cross_slope(df, start, end, s_year, e_year)
 
 	# Plot the data
 	if plot:
