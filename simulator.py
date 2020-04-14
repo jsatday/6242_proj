@@ -151,7 +151,11 @@ def main():
 	for ticker in ticker_list:
 
 		# Import the ticker data
-		df = pd.read_csv("Stocks/"+ticker+".us.txt",sep=",")
+		print(ticker)
+		try:
+			df = pd.read_csv("Stocks/"+ticker+".us.txt",sep=",")
+		except OSError:
+			continue
 		df = ta.add_all_ta_features(df, "Open", "High", "Low", "Close", "Volume", fillna=True)
 
 		# Pick a model
@@ -175,6 +179,7 @@ def main():
 				#print("========== RSI: %s ==========\n" % ticker)
 				# t_ctx = mcs.trade_with_macd_cross_slope(df, start=5500, end=6000, plot=args.plot)
 				t_ctx = rsi.trade_with_rsi(df, plot=args.plot)
+				pass
 
 			else:
 				print("Error: pick a valid model number")
@@ -188,6 +193,7 @@ def main():
 		# Show the plots
 		if args.plot:
 			plt.show()
+
 	print("Accuracy")
 	print(np.mean(accuracy_total)*100)
 	print("Average percentage gain")
