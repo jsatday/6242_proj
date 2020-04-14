@@ -1,0 +1,272 @@
+Industrials
+0
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+38.61598686213926
+Average percentage gain
+696.7950149032722
+1
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+45.02960871703783
+Average percentage gain
+489.4344903201214
+2
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+47.23469736494729
+Average percentage gain
+688.1493745869798
+3
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+81.11328704469861
+Average percentage gain
+1430.5127426325973
+HealthCare
+0
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+1
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+2
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+3
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+InformationTechnology
+0
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+39.31747116082663
+Average percentage gain
+920.2368350297842
+1
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+45.58622584497546
+Average percentage gain
+629.3711079236348
+2
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+47.351394502763924
+Average percentage gain
+871.3475730563656
+3
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+77.75663384125295
+Average percentage gain
+1772.1068558946558
+ConsumerDiscretionary
+0
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+1
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+2
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+3
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Utilities
+0
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+39.01214967709585
+Average percentage gain
+484.92429288847336
+1
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+45.77683774949535
+Average percentage gain
+346.7639613390735
+2
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+49.6206759360433
+Average percentage gain
+458.05597381941334
+3
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+81.1321796502203
+Average percentage gain
+1295.8439365121296
+Materials
+0
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+38.13846888855261
+Average percentage gain
+747.4158572649094
+1
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+45.44169965655761
+Average percentage gain
+500.6785001644166
+2
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+45.53173811490992
+Average percentage gain
+740.2955312775381
+3
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+74.65913141858863
+Average percentage gain
+1634.3368479793628
+RealEstate
+0
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+1
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+2
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+3
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+ConsuemrStaples
+0
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+nan
+Average percentage gain
+nan
+1
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+nan
+Average percentage gain
+nan
+2
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+nan
+Average percentage gain
+nan
+3
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+nan
+Average percentage gain
+nan
+Energy
+0
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+37.51502656843167
+Average percentage gain
+766.9148629374614
+1
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+42.83821673330727
+Average percentage gain
+586.1043284345939
+2
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+46.663127707272935
+Average percentage gain
+798.1945126551446
+3
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+74.86690339425262
+Average percentage gain
+1934.4827906618757
+TelecommunicationServices
+0
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+39.69504588790876
+Average percentage gain
+520.6874151872111
+1
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+42.57488367258328
+Average percentage gain
+410.0799611204718
+2
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+46.71587994985909
+Average percentage gain
+491.1165125413093
+3
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+83.73219373219372
+Average percentage gain
+956.507048117375
+Financials
+0
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+1
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+2
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+3
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+HealthCare
+0
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+1
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+2
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+3
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+ConsumerDiscretionary
+0
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+1
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+2
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+3
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+RealEstate
+0
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+1
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+2
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+3
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+ConsumerStaples
+0
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+1
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+2
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+3
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Financials
+0
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+39.5352243668118
+Average percentage gain
+682.4673746168041
+1
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+44.471096844575456
+Average percentage gain
+483.8685851312854
+2
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+47.10665147721752
+Average percentage gain
+680.8002605362568
+3
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run 'chmod 600 /Users/claudh/.kaggle/kaggle.json'
+Accuracy
+79.70547496652415
+Average percentage gain
+1425.6818111395876

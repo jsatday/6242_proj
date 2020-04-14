@@ -69,18 +69,21 @@ def trade_totals(df, t_ctx):
 
 	accuracy = win/(win+loss) if loss != 0 else 1
 	avg_percent_loss = sum_perc_loss/loss*100 if loss != 0 else 0
+	avg_gain = total_gain/win if win != 0 else 0
+	avg_percentage_gain = sum_perc_gain/win*100 if win != 0 else 0
+	avg_loss = total_loss/win if win != 0 else 0
 
 	if print_each == 1:
 		print("Total profit:   $%0.2f" % (round(total_profit, 2)))
 		print("Win/Loss:        %d/%d" % (win, loss if loss != 0 else 0))
 		print("Accuracy:        %0.2f%%\n" % (round(accuracy*100, 2)))
 		print("Total Gain:     $%0.2f" % (round(total_gain, 2)))
-		print("Avg Gain:       $%0.2f" % (round(total_gain, 2)/win))
-		print("Avg Perc Gain:   %0.2f%%\n" % (round(sum_perc_gain/win*100, 2)))
+		print("Avg Gain:       $%0.2f" % (round(avg_gain, 2)))
+		print("Avg Perc Gain:   %0.2f%%\n" % (round(avg_percentage_gain, 2)))
 		print("Total Loss:    -$%0.2f" % (abs(round(total_loss, 2))))
-		print("Avg Loss:      -$%0.2f" % (abs(round(total_loss, 2)/win)))
+		print("Avg Loss:      -$%0.2f" % (abs(round(avg_loss, 2))))
 		print("Avg Perc Loss:   %0.2f%%\n" % (round(avg_percent_loss, 2)))
-	return (accuracy,(sum_perc_gain/win))
+	return (accuracy,(avg_percentage_gain))
 
 
 def main():
@@ -93,9 +96,9 @@ def main():
 	group = parser.add_mutually_exclusive_group(required=True)
 	group.add_argument("-t", action="store", dest="tickers", nargs="+", help="Test a ticker (or multiple)")
 	group.add_argument("-s", action="store", dest="sector", help="Test a sector:\n" \
-						"    Industrials, Health Care, Information Technology, Consumer Discretionary,\n" \
-						"    Utilities, Financials, Materials, Real Estate, Consumer Staples,\n" \
-						"    Energy, Telecommunication Services\n")
+						"    Industrials, HealthCare, InformationTechnology, ConsumerDiscretionary,\n" \
+						"    Utilities, Financials, Materials, RealEstate, ConsumerStaples,\n" \
+						"    Energy, TelecommunicationServices\n")
 	parser.add_argument("-y", action="store", dest="year", nargs="+", help="Test a year (or year range)")
 	parser.add_argument("-p", action="store_true", dest="plot", default=False, help="Plot the chart")
 
@@ -155,21 +158,21 @@ def main():
 		t_ctx = 0
 		for model_num in model_nums:
 			if model_num == 0:
-				print("========== MACD Crossover: %s ==========\n" % ticker)
+				#print("========== MACD Crossover: %s ==========\n" % ticker)
 				# t_ctx = mc.trade_with_macd_cross(df, start=5500, end=6000, plot=args.plot)
 				t_ctx = mc.trade_with_macd_cross(df, plot=args.plot)
 
 			elif model_num == 1:
-				print("========== MACD Difference Smoothed: %s ==========\n" % ticker)
+				#print("========== MACD Difference Smoothed: %s ==========\n" % ticker)
 				# t_ctx = mds.trade_with_macd_diff_smooth(df, start=5500, end=6000, plot=args.plot)
 				t_ctx = mds.trade_with_macd_diff_smooth(df, plot=args.plot)
 
 			elif model_num == 2:
-				print("========== MACD Crossover Slope: %s ==========\n" % ticker)
+				#print("========== MACD Crossover Slope: %s ==========\n" % ticker)
 				# t_ctx = mcs.trade_with_macd_cross_slope(df, start=5500, end=6000, plot=args.plot)
 				t_ctx = mcs.trade_with_macd_cross_slope(df, plot=args.plot)
 			elif model_num == 3:
-				print("========== RSI: %s ==========\n" % ticker)
+				#print("========== RSI: %s ==========\n" % ticker)
 				# t_ctx = mcs.trade_with_macd_cross_slope(df, start=5500, end=6000, plot=args.plot)
 				t_ctx = rsi.trade_with_rsi(df, plot=args.plot)
 
@@ -185,7 +188,9 @@ def main():
 		# Show the plots
 		if args.plot:
 			plt.show()
+	print("Accuracy")
 	print(np.mean(accuracy_total)*100)
+	print("Average percentage gain")
 	print(np.mean(percentage_gain_total)*100)
 
 if __name__ == "__main__":
