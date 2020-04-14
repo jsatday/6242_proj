@@ -229,10 +229,11 @@ def main():
 		if args.plot:
 			plt.show()
 
-	print("Accuracy")
-	print(np.mean(accuracy_total)*100)
-	print("Average percentage gain")
-	print(np.mean(percentage_gain_total))
+	#print("Accuracy")
+	#print(np.mean(accuracy_total)*100)
+	#print("Average percentage gain")
+	#print(np.mean(percentage_gain_total))
+	print(str(s_year)+","+str(np.mean(accuracy_total)*100)+","+str(np.mean(percentage_gain_total)))
 
 if __name__ == "__main__":
 	main()
