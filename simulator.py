@@ -44,7 +44,7 @@ def init_stocks_dir():
 		print("Unzip complete")
 
 
-def trade_totals(df, t_ctx):
+def trade_totals(df, t_ctx, print_each=False):
 	total_profit = 0
 	total_gain = 0
 	total_loss = 0
@@ -52,7 +52,6 @@ def trade_totals(df, t_ctx):
 	sum_perc_loss = 0
 	win = 0
 	loss = 0
-	print_each = 0
 
 	for i in range(len(t_ctx.sell_prices)):
 		gain = t_ctx.sell_prices[i]-t_ctx.buy_prices[i]
@@ -73,7 +72,7 @@ def trade_totals(df, t_ctx):
 	avg_percentage_gain = sum_perc_gain/win*100 if win != 0 else 0
 	avg_loss = total_loss/win if win != 0 else 0
 
-	if print_each == 1:
+	if print_each:
 		print("Total profit:   $%0.2f" % (round(total_profit, 2)))
 		print("Win/Loss:        %d/%d" % (win, loss if loss != 0 else 0))
 		print("Accuracy:        %0.2f%%\n" % (round(accuracy*100, 2)))
@@ -101,6 +100,7 @@ def main():
 						"    Energy, TelecommunicationServices\n")
 	parser.add_argument("-y", action="store", dest="year", nargs="+", help="Test a year (or year range)")
 	parser.add_argument("-p", action="store_true", dest="plot", default=False, help="Plot the chart")
+	parser.add_argument("-v", action="store_true", dest="verbose", default=False, help="Show the results of each ticker")
 
 	# Parse the arguments
 	try:
@@ -151,12 +151,12 @@ def main():
 	for ticker in ticker_list:
 
 		# Import the ticker data
-		print(ticker)
 		try:
 			df = pd.read_csv("Stocks/"+ticker+".us.txt",sep=",")
-		except OSError:
+			df = ta.add_all_ta_features(df, "Open", "High", "Low", "Close", "Volume", fillna=True)
+		except OSError as e:
+			print("%s:" % (ticker), e)
 			continue
-		df = ta.add_all_ta_features(df, "Open", "High", "Low", "Close", "Volume", fillna=True)
 
 		# Pick a model
 		t_ctx = 0
@@ -185,11 +185,13 @@ def main():
 				print("Error: pick a valid model number")
 
 			# Find the totals
-			accuracy_ticker = trade_totals(df, t_ctx)
+
+			if args.verbose:
+				print("==============\n    ", ticker.upper(), "\n==============")
+			accuracy_ticker = trade_totals(df, t_ctx, args.verbose)
 			accuracy_total.append(accuracy_ticker[0])
 			percentage_gain_total.append(accuracy_ticker[1])
 	
-
 		# Show the plots
 		if args.plot:
 			plt.show()
@@ -197,7 +199,7 @@ def main():
 	print("Accuracy")
 	print(np.mean(accuracy_total)*100)
 	print("Average percentage gain")
-	print(np.mean(percentage_gain_total)*100)
+	print(np.mean(percentage_gain_total))
 
 if __name__ == "__main__":
 	main()
