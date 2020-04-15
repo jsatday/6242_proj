@@ -113,7 +113,7 @@ def trade_totals(df, t_ctx, print_each=False):
 		print("Avg Loss:           -$%0.2f" % (abs(round(avg_loss, 2))))
 		print("Avg Perc Loss:        %0.2f%%\n" % (round(avg_percent_loss, 2)))
 
-	return avg_percent_gain
+	return avg_total_perc_gain
 
 
 def main():
@@ -178,6 +178,9 @@ def main():
 	# Initialize the Stocks directory
 	init_stocks_dir()
 
+	# Initialize results dictionary
+	results_dict = {}
+
 	#
 	# Run the simulation
 	#
@@ -232,19 +235,28 @@ def main():
 
 			else:
 				print("Error: pick a valid model number")
+				continue
 
 			# Find the totals
 			avg_total_perc_gain = trade_totals(df, t_ctx, args.verbose)
 
-			# Export results to a csv
+			# Add results to dictionary
 			if args.filename:
-				export_sector = args.sector if args.sector else "None"
-				export_year = args.year[0] if args.year else "None"
-				export_to_csv(args.filename, model_num, avg_total_perc_gain, export_sector, export_year)
+				if model_num in results_dict.keys():
+					results_dict[model_num].append(avg_total_perc_gain)
+				else:
+					results_dict[model_num] = [avg_total_perc_gain]
 
 		# Show the plots
 		if args.plot:
 			plt.show()
+
+	# Export results to a csv
+	if args.filename:
+		export_sector = args.sector if args.sector else "None"
+		export_year = args.year[0] if args.year else "None"
+		for model_num in results_dict.keys():
+			export_to_csv(args.filename, model_num, round(sum(results_dict[model_num])/len(results_dict[model_num]),2), export_sector, export_year)
 
 
 if __name__ == "__main__":
