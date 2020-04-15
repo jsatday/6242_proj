@@ -190,7 +190,8 @@ def main():
 			df = ta.add_all_ta_features(df, "Open", "High", "Low", "Close", "Volume", fillna=True)
 			if args.year:
 				if not check_valid_date_range(df, args.year[0], args.year[-1]):
-					exit(-1)
+					print("Skipping over ticker: %s\n" % ticker.upper())
+					continue
 		except OSError as e:
 			print("%s:" % (ticker), e)
 			continue
