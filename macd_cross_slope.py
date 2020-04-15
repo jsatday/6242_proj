@@ -37,15 +37,13 @@ def macd_cross_slope(df, start=0, end=-1, s_year=0, e_year=0):
 		#
 
 		# Don't trade anything under 10
-		if df.Close[i] < 10 and not t_ctx.in_trade:
-			continue
+		# if df.Close[i] < 10 and not t_ctx.in_trade:
+		# 	continue
 
 		# if t_ctx.in_trade:
 		# 	t_ctx.price_diff_cur = df.Close[i] - t_ctx.buy_price[-1]
 		# 	price_diff_high = t_ctx.price_diff_cur if t_ctx.price_diff_cur > price_diff_high else price_diff_high
 		# 	if t_ctx.price_diff_cur < price_diff_high/2:
-
-
 
 		#
 		# Typical entry and exit
