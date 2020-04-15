@@ -198,34 +198,39 @@ def main():
 		# Initialize variables
 		t_ctx = 0
 
+		# Make verbosity pretty
+		if args.verbose:
+			print("==============\n    ", ticker.upper(), "\n==============\n")
+
 		# Pick a model
 		for model_num in model_nums:
+
 			if model_num == 0:
-				#print("========== MACD Crossover: %s ==========\n" % ticker)
+				if args.verbose:
+					print("========== MACD Crossover: %s ==========\n" % ticker.upper())
 				# t_ctx = mc.trade_with_macd_cross(df, start=5500, end=6000, plot=args.plot)
 				t_ctx = mc.trade_with_macd_cross(df, plot=args.plot, s_year=s_year, e_year=e_year)
 
 			elif model_num == 1:
-				#print("========== MACD Difference Smoothed: %s ==========\n" % ticker)
+				if args.verbose:
+					print("========== MACD Difference Smoothed: %s ==========\n" % ticker.upper())
 				# t_ctx = mds.trade_with_macd_diff_smooth(df, start=5500, end=6000, plot=args.plot)
 				t_ctx = mds.trade_with_macd_diff_smooth(df, plot=args.plot, s_year=s_year, e_year=e_year)
 
 			elif model_num == 2:
-				#print("========== MACD Crossover Slope: %s ==========\n" % ticker)
+				if args.verbose:
+					print("========== MACD Crossover Slope: %s ==========\n" % ticker.upper())
 				# t_ctx = mcs.trade_with_macd_cross_slope(df, start=5500, end=6000, plot=args.plot)
 				t_ctx = mcs.trade_with_macd_cross_slope(df, plot=args.plot, s_year=s_year, e_year=e_year)
+
 			elif model_num == 3:
-				#print("========== RSI: %s ==========\n" % ticker)
+				if args.verbose:
+					print("========== RSI: %s ==========\n" % ticker.upper())
 				# t_ctx = mcs.trade_with_macd_cross_slope(df, start=5500, end=6000, plot=args.plot)
 				t_ctx = rsi.trade_with_rsi(df, plot=args.plot, s_year=s_year, e_year=e_year)
-				pass
 
 			else:
 				print("Error: pick a valid model number")
-
-			# Make verbosity pretty
-			if args.verbose:
-				print("==============\n    ", ticker.upper(), "\n==============")
 
 			# Find the totals
 			avg_total_perc_gain = trade_totals(df, t_ctx, args.verbose)
