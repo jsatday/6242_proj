@@ -66,6 +66,12 @@ def check_valid_date_range(df, s_year, e_year):
 		return False
 
 
+def export_to_csv(filename, model, avg_total_perc_gain, sector, year):
+	with open(filename+".csv", "a", newline="") as f:
+		writer = csv.writer(f, delimiter=",")
+		writer.writerow([model, avg_total_perc_gain, sector, year])
+
+
 def trade_totals(df, t_ctx, print_each=False):
 	total_profit = 0
 	total_gain = 0
@@ -88,25 +94,26 @@ def trade_totals(df, t_ctx, print_each=False):
 			loss += 1
 			sum_perc_loss += abs(gain)/t_ctx.buy_prices[i]
 
-	accuracy = win/(win+loss) if loss != 0 else 1
-	avg_percent_loss = sum_perc_loss/loss*100 if loss != 0 else 0
-	avg_gain = total_gain/win if win != 0 else 0
-	avg_percent_gain = sum_perc_gain/win*100 if win != 0 else 0
-	avg_loss = total_loss/win if win != 0 else 0
-	cumulative_perc_gain = avg_percent_gain*accuracy-avg_percent_loss*(1-accuracy)
+	accuracy = win/(win+loss)                  if loss != 0 else 1
+	avg_percent_loss = sum_perc_loss/loss*100  if loss != 0 else 0
+	avg_gain = total_gain/win                  if win  != 0 else 0
+	avg_percent_gain = sum_perc_gain/win*100   if win  != 0 else 0
+	avg_loss = total_loss/win                  if win  != 0 else 0
+	avg_total_perc_gain = avg_percent_gain*accuracy-avg_percent_loss*(1-accuracy)
 
 	if print_each:
-		print("Combined Perc Gain: %0.2f%%\n" % (round(cumulative_perc_gain, 2)))
-		print("Total Profit:       $%0.2f" % (round(total_profit, 2)))
-		print("Win/Loss:            %d/%d" % (win, loss if loss != 0 else 0))
-		print("Accuracy:            %0.2f%%\n" % (round(accuracy*100, 2)))
-		print("Total Gain:         $%0.2f" % (round(total_gain, 2)))
-		print("Avg Gain:           $%0.2f" % (round(avg_gain, 2)))
-		print("Avg Perc Gain:       %0.2f%%\n" % (round(avg_percent_gain, 2)))
-		print("Total Loss:        -$%0.2f" % (abs(round(total_loss, 2))))
-		print("Avg Loss:          -$%0.2f" % (abs(round(avg_loss, 2))))
-		print("Avg Perc Loss:       %0.2f%%\n" % (round(avg_percent_loss, 2)))
-	return (accuracy,(avg_percent_gain))
+		print("Avg Total Perc Gain:  %0.2f%%\n" % (round(avg_total_perc_gain, 2)))
+		print("Total Profit:        $%0.2f" % (round(total_profit, 2)))
+		print("Win/Loss:             %d/%d" % (win, loss if loss != 0 else 0))
+		print("Accuracy:             %0.2f%%\n" % (round(accuracy*100, 2)))
+		print("Total Gain:          $%0.2f" % (round(total_gain, 2)))
+		print("Avg Gain:            $%0.2f" % (round(avg_gain, 2)))
+		print("Avg Perc Gain:        %0.2f%%\n" % (round(avg_percent_gain, 2)))
+		print("Total Loss:         -$%0.2f" % (abs(round(total_loss, 2))))
+		print("Avg Loss:           -$%0.2f" % (abs(round(avg_loss, 2))))
+		print("Avg Perc Loss:        %0.2f%%\n" % (round(avg_percent_loss, 2)))
+
+	return avg_percent_gain
 
 
 def main():
@@ -117,14 +124,15 @@ def main():
 						"    2: MACD slope\n" \
 						"	 3: RSI")
 	group = parser.add_mutually_exclusive_group(required=True)
-	group.add_argument("-t", action="store", dest="tickers", nargs="+", help="Test a ticker (or multiple)")
+	group.add_argument("-t", action="store", dest="tickers", nargs="+", help="Test a ticker (or multiple).")
 	group.add_argument("-s", action="store", dest="sector", help="Test a sector:\n" \
 						"    Industrials, HealthCare, InformationTechnology, ConsumerDiscretionary,\n" \
 						"    Utilities, Financials, Materials, RealEstate, ConsumerStaples,\n" \
 						"    Energy, TelecommunicationServices\n")
-	parser.add_argument("-y", action="store", dest="year", nargs="+", help="Test a year (or year range)")
-	parser.add_argument("-p", action="store_true", dest="plot", default=False, help="Plot the chart")
-	parser.add_argument("-v", action="store_true", dest="verbose", default=False, help="Show the results of each ticker")
+	parser.add_argument("-y", action="store", dest="year", nargs="+", help="Test a year (or year range).")
+	parser.add_argument("-e", action="store", dest="filename", help="Export results to a file. Will append to existing file.")
+	parser.add_argument("-p", action="store_true", dest="plot", default=False, help="Plot the chart.")
+	parser.add_argument("-v", action="store_true", dest="verbose", default=False, help="Show the results of each ticker.")
 
 	# Parse the arguments
 	try:
@@ -173,8 +181,6 @@ def main():
 	#
 	# Run the simulation
 	#
-	accuracy_total = []
-	percentage_gain_total = []
 
 	for ticker in ticker_list:
 
@@ -217,23 +223,23 @@ def main():
 			else:
 				print("Error: pick a valid model number")
 
-			# Find the totals
-
+			# Make verbosity pretty
 			if args.verbose:
 				print("==============\n    ", ticker.upper(), "\n==============")
-			accuracy_ticker = trade_totals(df, t_ctx, args.verbose)
-			accuracy_total.append(accuracy_ticker[0])
-			percentage_gain_total.append(accuracy_ticker[1])
-	
+
+			# Find the totals
+			avg_total_perc_gain = trade_totals(df, t_ctx, args.verbose)
+
+			# Export results to a csv
+			if args.filename:
+				export_sector = args.sector if args.sector else "None"
+				export_year = args.year[0] if args.year else "None"
+				export_to_csv(args.filename, model_num, avg_total_perc_gain, export_sector, export_year)
+
 		# Show the plots
 		if args.plot:
 			plt.show()
 
-	#print("Accuracy")
-	#print(np.mean(accuracy_total)*100)
-	#print("Average percentage gain")
-	#print(np.mean(percentage_gain_total))
-	print(str(s_year)+","+str(np.mean(accuracy_total)*100)+","+str(np.mean(percentage_gain_total)))
 
 if __name__ == "__main__":
 	main()
