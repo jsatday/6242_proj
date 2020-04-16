@@ -8,7 +8,7 @@ import matplotlib as mpl
 
 
 def macd_diff_smooth(df, start=0, end=-1, s_year=0, e_year=0):
-	window_size = 7
+	window_size = 25
 	macd_diff_data = []
 	macd_diff_smooth_data = []
 	t_ctx = trade_context()

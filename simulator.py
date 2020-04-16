@@ -66,14 +66,14 @@ def check_valid_date_range(df, s_year, e_year):
 		return False
 
 
-def export_to_csv(filename, model, avg_total_perc_gain, sector, year):
+def export_to_csv(filename, model, avg_perc_change_per_trade, total_change, num_trades, sector, year):
 	with open(filename+".csv", "a", newline="") as f:
 		writer = csv.writer(f, delimiter=",")
-		writer.writerow([model, avg_total_perc_gain, sector, year])
+		writer.writerow([model, avg_perc_change_per_trade, total_change, num_trades, sector, year])
 
 
 def trade_totals(df, t_ctx, print_each=False):
-	total_profit = 0
+	total_change = 0
 	total_gain = 0
 	total_loss = 0
 	sum_perc_gain = 0
@@ -82,38 +82,39 @@ def trade_totals(df, t_ctx, print_each=False):
 	loss = 0
 
 	for i in range(len(t_ctx.sell_prices)):
-		gain = t_ctx.sell_prices[i]-t_ctx.buy_prices[i]
-		total_profit += gain
+		gain = (t_ctx.sell_prices[i]-t_ctx.buy_prices[i])*t_ctx.pos_size_list[i]
+		total_change += gain
 
 		if gain > 0:
 			total_gain += gain
 			win += 1
-			sum_perc_gain += gain/t_ctx.buy_prices[i]
+			sum_perc_gain += gain/t_ctx.trade_value
 		else:
 			total_loss += gain
 			loss += 1
-			sum_perc_loss += abs(gain)/t_ctx.buy_prices[i]
+			sum_perc_loss += abs(gain)/t_ctx.trade_value
 
 	accuracy = win/(win+loss)                  if loss != 0 else 1
 	avg_percent_loss = sum_perc_loss/loss*100  if loss != 0 else 0
 	avg_gain = total_gain/win                  if win  != 0 else 0
 	avg_percent_gain = sum_perc_gain/win*100   if win  != 0 else 0
 	avg_loss = total_loss/win                  if win  != 0 else 0
-	avg_total_perc_gain = avg_percent_gain*accuracy-avg_percent_loss*(1-accuracy)
+	avg_perc_change_per_trade = avg_percent_gain*accuracy-avg_percent_loss*(1-accuracy)
 
 	if print_each:
-		print("Avg Total Perc Gain:  %0.2f%%\n" % (round(avg_total_perc_gain, 2)))
-		print("Total Profit:        $%0.2f" % (round(total_profit, 2)))
-		print("Win/Loss:             %d/%d" % (win, loss if loss != 0 else 0))
-		print("Accuracy:             %0.2f%%\n" % (round(accuracy*100, 2)))
-		print("Total Gain:          $%0.2f" % (round(total_gain, 2)))
-		print("Avg Gain:            $%0.2f" % (round(avg_gain, 2)))
-		print("Avg Perc Gain:        %0.2f%%\n" % (round(avg_percent_gain, 2)))
-		print("Total Loss:         -$%0.2f" % (abs(round(total_loss, 2))))
-		print("Avg Loss:           -$%0.2f" % (abs(round(avg_loss, 2))))
-		print("Avg Perc Loss:        %0.2f%%\n" % (round(avg_percent_loss, 2)))
+		print("Avg Perc Change per Trade:   %0.2f%%"   % (round(avg_perc_change_per_trade, 2)))
+		print("Total Change:               $%0.2f"     % (round(total_change, 2)))
+		print("Number of Trades:            %d"        % (win+loss))
+		print("Win/Loss:                    %d/%d"     % (win, loss if loss != 0 else 0))
+		print("Accuracy:                    %0.2f%%\n" % (round(accuracy*100, 2)))
+		print("Total Gain:                 $%0.2f"     % (round(total_gain, 2)))
+		print("Avg Gain:                   $%0.2f"     % (round(avg_gain, 2)))
+		print("Avg Perc Gain:               %0.2f%%\n" % (round(avg_percent_gain, 2)))
+		print("Total Loss:                -$%0.2f"     % (abs(round(total_loss, 2))))
+		print("Avg Loss:                  -$%0.2f"     % (abs(round(avg_loss, 2))))
+		print("Avg Perc Loss:               %0.2f%%\n" % (round(avg_percent_loss, 2)))
 
-	return avg_total_perc_gain
+	return avg_perc_change_per_trade, total_change, win+loss
 
 
 def main():
@@ -238,14 +239,19 @@ def main():
 				continue
 
 			# Find the totals
-			avg_total_perc_gain = trade_totals(df, t_ctx, args.verbose)
+			avg_perc_change_per_trade, total_change, num_trades = trade_totals(df, t_ctx, args.verbose)
 
 			# Add results to dictionary
 			if args.filename:
 				if model_num in results_dict.keys():
-					results_dict[model_num].append(avg_total_perc_gain)
+					results_dict[model_num]["perc_change"].append(avg_perc_change_per_trade)
+					results_dict[model_num]["total_change"].append(total_change)
+					results_dict[model_num]["num_trades"].append(num_trades)
 				else:
-					results_dict[model_num] = [avg_total_perc_gain]
+					tmp_dict = {"perc_change":  [avg_perc_change_per_trade],
+								"total_change": [total_change],
+								"num_trades":   [num_trades]}
+					results_dict[model_num] = tmp_dict
 
 		# Show the plots
 		if args.plot:
@@ -256,7 +262,10 @@ def main():
 		export_sector = args.sector if args.sector else "None"
 		export_year = args.year[0] if args.year else "None"
 		for model_num in results_dict.keys():
-			export_to_csv(args.filename, model_num, round(sum(results_dict[model_num])/len(results_dict[model_num]),2), export_sector, export_year)
+			perc_change = round(sum(results_dict[model_num]["perc_change"])/len(results_dict[model_num]["perc_change"]),2)
+			total_change = round(sum(results_dict[model_num]["total_change"])/len(results_dict[model_num]["total_change"]),2)
+			num_trades = round(sum(results_dict[model_num]["num_trades"])/len(results_dict[model_num]["num_trades"]),2)
+			export_to_csv(args.filename, model_num, perc_change, total_change, num_trades, export_sector, export_year)
 
 
 if __name__ == "__main__":

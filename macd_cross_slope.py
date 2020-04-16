@@ -8,7 +8,7 @@ import matplotlib as mpl
 
 
 def macd_cross_slope(df, start=0, end=-1, s_year=0, e_year=0):
-	window_size = 15
+	window_size = 17
 	macd_smooth = []
 	t_ctx = trade_context()
 
@@ -51,7 +51,7 @@ def macd_cross_slope(df, start=0, end=-1, s_year=0, e_year=0):
 
 		# Buy the stock
 		if (macd_smooth[-1]-macd_smooth[-2] > 0 and
-			macd_smooth[-1] < df.trend_macd_signal[i] and
+			# macd_smooth[-1] < df.trend_macd_signal[i] and
 			not t_ctx.in_trade):
 
 			tc.buy_stock(t_ctx, i, df.Close[i], macd_smooth[-1])
