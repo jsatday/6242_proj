@@ -22,7 +22,7 @@ pip3 install numpy
 pip3 install scipy
 ```
 
-## Run examples
+## Usage
 To see the usage:
 ```python3 simulator.py -h```
 
@@ -45,6 +45,7 @@ Energy, TelecommunicationServices
 -p: Plot the graph (Use the microscope on the graph to zoom into parts of the plot)  
 -v: Show more verbose results (recommended when using -t)  
 
+## Run Examples
 The base program requires the use of a model (0-3), a ticker (-t) or sector (-s):  
 ```python3 simulator.py 0 -t msft -v```  
 ```python3 simulator.py 1 -s Energy -v```  
@@ -54,11 +55,8 @@ To test a year or a range of years:
 ```python3 simulator.py 2 -t aapl -y 2006 2012 -v -p```  
 ```python3 simulator.py 0 -s Industrials -y 2006 2012```  
 
-Get a range of results across a sector:  
+Get a range of results across a sector and store it in a file:  
 ```python3 simulator.py 0 1 2 3 -s HealthCare -y 2006 2012 -e health_care_results```  
-
-
-
 
 ## API Documentation
 ### Kaggle Python API Documentation
