@@ -38,7 +38,6 @@ The base program requires the use of a model (0-3), a ticker (-t) or sector (-s)
 To test a year or a range of years:  
 ```python3 simulator.py 3 -t aapl -y 2012 -v```  
 ```python3 simulator.py 2 -t aapl -y 2006 2012 -v -p```  
-```python3 simulator.py 0 -s Industrials -y 2006 2012```  
 
 Get a range of results across a sector and store it in a file:  
 ```python3 simulator.py 0 1 2 3 -s HealthCare -y 2005 -e health_care_results```  
