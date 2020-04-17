@@ -26,45 +26,45 @@ pip3 install scipy
 To see the usage:
 ```python3 simulator.py -h```
 
-Required
-model: 0 (macd_cross), 1 (macd_diff_smooth), 2 (macd_cross_slope), or 3 (rsi)
--t: Specify a ticker to analyse
--s: Specify a sector to analyse
+Required  
+model: 0 (macd_cross), 1 (macd_diff_smooth), 2 (macd_cross_slope), or 3 (rsi)  
+-t: Specify a ticker to analyse  
+-s: Specify a sector to analyse  
 
-Optional
--y: Specify a year or range of years to analyse over
--e: Specify a file to export the overall results to
--p: Plot the graph (Use the microscope on the graph to zoom into parts of the plot)
--v: Show more verbose results (recommended when using -t)
+Optional  
+-y: Specify a year or range of years to analyse over  
+-e: Specify a file to export the overall results to  
+-p: Plot the graph (Use the microscope on the graph to zoom into parts of the plot)  
+-v: Show more verbose results (recommended when using -t)  
 
-The base program requires the use of a model (0-3), a ticker (-t) or sector (-s):
-```python3 simulator.py 0 -t msft -v```
-```python3 simulator.py 1 -s Energy -v```
+The base program requires the use of a model (0-3), a ticker (-t) or sector (-s):  
+```python3 simulator.py 0 -t msft -v```  
+```python3 simulator.py 1 -s Energy -v```  
 
-To test a year or a range of years:
-```python3 simulator.py 3 -t aapl -y 2012 -v```
-```python3 simulator.py 2 -t aapl -y 2006 2012 -v -p```
-```python3 simulator.py 0 -s Industrials -y 2006 2012```
+To test a year or a range of years:  
+```python3 simulator.py 3 -t aapl -y 2012 -v```  
+```python3 simulator.py 2 -t aapl -y 2006 2012 -v -p```  
+```python3 simulator.py 0 -s Industrials -y 2006 2012```  
 
-Get a range of results across a sector:
-```python3 simulator.py 0 1 2 3 -s HealthCare -y 2006 2012 -e health_care_results```
+Get a range of results across a sector:  
+```python3 simulator.py 0 1 2 3 -s HealthCare -y 2006 2012 -e health_care_results```  
 
 
 
 
 ## API Documentation
 ### Kaggle Python API Documentation
-https://github.com/Kaggle/kaggle-api
-https://technowhisp.com/kaggle-api-python-documentation/
+https://github.com/Kaggle/kaggle-api  
+https://technowhisp.com/kaggle-api-python-documentation/  
 
 ### Technical Analysis Python Library
-https://github.com/bukosabino/ta/blob/master/README.md
+https://github.com/bukosabino/ta/blob/master/README.md  
 
 ## Kaggle Database
-https://www.kaggle.com/borismarjanovic/price-volume-data-for-all-us-stocks-etfs#aaba.us.txt
+https://www.kaggle.com/borismarjanovic/price-volume-data-for-all-us-stocks-etfs#aaba.us.txt  
 
 ### Maybe look at this later
-https://www.kaggle.com/borismarjanovic/daily-and-intraday-stock-price-data
+https://www.kaggle.com/borismarjanovic/daily-and-intraday-stock-price-data  
 
 ## Stocks with Sectors
-https://datahub.io/core/s-and-p-500-companies#resource-s-and-p-500-companies_zip
+https://datahub.io/core/s-and-p-500-companies#resource-s-and-p-500-companies_zip  
