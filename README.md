@@ -26,12 +26,15 @@ pip3 install scipy
 To see the usage:
 ```python3 simulator.py -h```
 
-Required  
-model: 0 (macd_cross), 1 (macd_diff_smooth), 2 (macd_cross_slope), or 3 (rsi)  
+Pick a Model:  
+0 (macd_cross), 1 (macd_diff_smooth), 2 (macd_cross_slope), or 3 (rsi)  
+
+REQUIRED
 -t: Specify a ticker to analyse  
+-- OR --
 -s: Specify a sector to analyse  
 
-Optional  
+OPTIONAL  
 -y: Specify a year or range of years to analyse over  
 -e: Specify a file to export the overall results to  
 -p: Plot the graph (Use the microscope on the graph to zoom into parts of the plot)  
