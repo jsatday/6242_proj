@@ -21,9 +21,9 @@ import macd_cross_slope as mcs
 import rsi
 
 
-# warnings.filterwarnings("ignore")
+warnings.filterwarnings("ignore")
 
-
+# DEPRICATED: USE AZURE
 def init_stocks_dir():
 	# Check if stocks exists
 	if not os.path.exists("Stocks"):
@@ -31,7 +31,8 @@ def init_stocks_dir():
 		# Check if the zip has been downloaded
 		if not os.path.exists("price-volume-data-for-all-us-stocks-etfs.zip"):
 			print("Downloading database...")
-			global api
+			api = KaggleApi()
+			api.authenticate()
 			api.dataset_download_files("borismarjanovic/price-volume-data-for-all-us-stocks-etfs")
 			print("Download complete")
 
@@ -42,6 +43,18 @@ def init_stocks_dir():
 			if file.startswith('Stocks/'):
 				zip.extract(file)
 		print("Unzip complete")
+
+
+def get_ticker_data(ticker):
+	if not os.path.exists("Stocks"):
+		os.mkdir("Stocks", 0o777) 
+	ticker_path = "Stocks/"+ticker+".us.txt"
+	if os.path.isfile(ticker_path):
+		print("%s already exists." % (ticker_path))
+	else:
+		url = "https://6242stockmarket.blob.core.windows.net/stocks/"+ticker+".us.txt"
+		wget.download(url, "Stocks/")
+		print(" Download complete: %s.us.txt" % (ticker))
 
 
 def check_valid_date_range(df, s_year, e_year):
@@ -123,7 +136,7 @@ def main():
 						"    0: MACD Crossover\n" \
 						"    1: MACD Difference Smoothed\n" \
 						"    2: MACD slope\n" \
-						"	 3: RSI")
+						"    3: RSI")
 	group = parser.add_mutually_exclusive_group(required=True)
 	group.add_argument("-t", action="store", dest="tickers", nargs="+", help="Test a ticker (or multiple).")
 	group.add_argument("-s", action="store", dest="sector", help="Test a sector:\n" \
@@ -176,8 +189,8 @@ def main():
 		for x in args.tickers:
 			ticker_list.append(x)
 
-	# Initialize the Stocks directory
-	init_stocks_dir()
+	# DEPRICATED: Initialize the Stocks directory
+	# init_stocks_dir()
 
 	# Initialize results dictionary
 	results_dict = {}
@@ -187,6 +200,9 @@ def main():
 	#
 
 	for ticker in ticker_list:
+
+		# Pull down ticker data
+		get_ticker_data(ticker)
 
 		# Import the ticker data
 		try:
@@ -266,6 +282,14 @@ def main():
 			total_change = round(sum(results_dict[model_num]["total_change"])/len(results_dict[model_num]["total_change"]),2)
 			num_trades = round(sum(results_dict[model_num]["num_trades"])/len(results_dict[model_num]["num_trades"]),2)
 			export_to_csv(args.filename, model_num, perc_change, total_change, num_trades, export_sector, export_year)
+
+
+	# Helpful warning
+	if not args.verbose and not args.plot and not args.filename:
+		print("Simulataion Complete!\n"\
+			"    For verbose:     -v\n"\
+			"    To plot a graph: -p\n"\
+			"    Export to file:  -e <filename>")
 
 
 if __name__ == "__main__":
