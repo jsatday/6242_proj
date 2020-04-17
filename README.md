@@ -31,8 +31,21 @@ CHOOSE A MODEL:
 
 REQUIRED:  
 -t: Specify a ticker to analyse  
--- OR --
+-- OR --  
 -s: Specify a sector to analyse  
+
+List of sectors:  
+    Industrials  
+    HealthCare  
+    InformationTechnology  
+    ConsumerDiscretionary  
+    Utilities  
+    Financials  
+    Materials  
+    RealEstate  
+    ConsumerStaples  
+    Energy  
+    TelecommunicationServices
 
 OPTIONAL:  
 -y: Specify a year or range of years to analyse over  
