@@ -1,10 +1,10 @@
 # 6242_proj
 
 ## Installing Dependancies
-Python2
+Python2  
 ```pip install  kaggle matplotlib mplcursors numpy scipy ta scipy```
 
-Python3
+Python3  
 ```pip3 install kaggle matplotlib mplcursors numpy scipy ta scipy```
 
 ## Usage
