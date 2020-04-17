@@ -56,7 +56,7 @@ To test a year or a range of years:
 ```python3 simulator.py 0 -s Industrials -y 2006 2012```  
 
 Get a range of results across a sector and store it in a file:  
-```python3 simulator.py 0 1 2 3 -s HealthCare -y 2006 2012 -e health_care_results```  
+```python3 simulator.py 0 1 2 3 -s HealthCare -y 2005 -e health_care_results```  
 
 ## API Documentation
 ### Kaggle Python API Documentation
