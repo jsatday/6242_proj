@@ -2,25 +2,10 @@
 
 ## Installing Dependancies
 Python2
-```
-pip install kaggle
-pip install scipy
-pip install mplcursors
-pip install ta
-pip install matplotlib
-pip install numpy
-pip install scipy
-```
+```pip install  kaggle matplotlib mplcursors numpy scipy ta scipy```
+
 Python3
-```
-pip3 install kaggle
-pip3 install scipy
-pip3 install mplcursors
-pip3 install ta
-pip3 install matplotlib
-pip3 install numpy
-pip3 install scipy
-```
+```pip3 install kaggle matplotlib mplcursors numpy scipy ta scipy```
 
 ## Usage
 To see the usage:
