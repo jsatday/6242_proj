@@ -35,17 +35,9 @@ REQUIRED:
 -s: Specify a sector to analyse  
 
 List of sectors:  
-    Industrials  
-    HealthCare  
-    InformationTechnology  
-    ConsumerDiscretionary  
-    Utilities  
-    Financials  
-    Materials  
-    RealEstate  
-    ConsumerStaples  
-    Energy  
-    TelecommunicationServices
+Industrials, HealthCare,InformationTechnology, ConsumerDiscretionary  
+Utilities, Financials, Materials, RealEstate, ConsumerStaples  
+Energy, TelecommunicationServices  
 
 OPTIONAL:  
 -y: Specify a year or range of years to analyse over  
