@@ -26,7 +26,7 @@ pip3 install scipy
 To see the usage:
 ```python3 simulator.py -h```
 
-Pick a Model:  
+CHOOSE A MODEL:  
 0 (macd_cross), 1 (macd_diff_smooth), 2 (macd_cross_slope), or 3 (rsi)  
 
 REQUIRED  
